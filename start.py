@@ -5,14 +5,13 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-
-data = pd.read_csv('ECDC_COVID')
+data = pd.read_csv('https://opendata.ecdc.europa.eu/covid19/casedistribution/csv')
 data.columns
 #remove 2019 data
 data = data[data['year'] == 2020]
-#Select dataset1 for exploration at a 'global' level and based on 'daily' new cases and deaths
+#Select dataset 1 for exploration at a 'global' level and based on 'daily' new cases and deaths
 data1 = data[['dateRep','day','month','cases','deaths']]
-#data1
+
 global_data = data1.groupby(['dateRep']).agg(
             month = pd.NamedAgg(column = 'month', aggfunc = 'min'),
             day = pd.NamedAgg(column = 'day', aggfunc = 'min'),
@@ -21,10 +20,9 @@ global_data = data1.groupby(['dateRep']).agg(
             )
 global_data.columns
 global_data.sort_values( by = ['month', 'day'])
-
-global_data['time']=np.arange(116)
-global_data
-
+nrows = len(global_data.index)
+global_data['time']=np.arange(nrows)
+#global_data
 #explote correlation between global daily deaths and global daily cases with time
 plt.scatter(global_data['daily_global_cases'],global_data['daily_global_deaths'])
 
@@ -53,5 +51,7 @@ plt.xlabel('global daily cases')
 plt.ylabel('global daily deaths')
 plt.xticks()
 plt.yticks()
-
+plt.savefig('linear_model.png')
 plt.show()
+
+        
