@@ -3,6 +3,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn import linear_model
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
 
 data = pd.read_csv('ECDC_COVID')
 data.columns
@@ -33,7 +35,23 @@ sns.pairplot(global_data, hue= 'month', hue_order=None, palette= 'GnBu_d',
              plot_kws=None, diag_kws=None, grid_kws=None, size=None)
 
 y = np.array(global_data['daily_global_deaths'])
-x = np.array(global_data[['daily_global_cases','time']])
+x = np.array(global_data[['daily_global_cases']])
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 lin_reg = linear_model.LinearRegression()
-lin_reg.fit(x,y)
+
+lin_reg.fit(x_train,y_train)
 lin_reg.coef_
+
+y_pred = lin_reg.predict(x_test)
+mean_squared_error(y_test, y_pred)
+r2_score(y_test, y_pred)
+
+plt.scatter(x_test, y_test,  color='black')
+plt.plot(x_test, y_pred, color='blue', linewidth=3)
+plt.title('linear model')
+plt.xlabel('global daily cases')
+plt.ylabel('global daily deaths')
+plt.xticks()
+plt.yticks()
+
+plt.show()
