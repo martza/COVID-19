@@ -53,5 +53,3 @@ plt.xticks()
 plt.yticks()
 plt.savefig('linear_model.png')
 plt.show()
-
-        
