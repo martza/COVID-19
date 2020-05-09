@@ -6,16 +6,19 @@
 
 # Data
 
-# Code Organisation
-.
+# Code Organization
+
+```
+COVID-19
 ├── covid_19.py
 ├── models
 │   ├── linear.py
-│   ├── non-linear.py
+│   └── non-linear.py
 ├── outpup_files
 │   └── linear.py
-├── README.md
-└── README.txt
+└── README.md
+```
+
 
 # Statistical Models
 
@@ -26,7 +29,3 @@
 ## Acknowledgements
 
 ## Contributions
-
-
-
-
