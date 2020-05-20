@@ -1,5 +1,3 @@
-#! /usr/bin/env python 
-
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -7,10 +5,32 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
+
+###############################################################################
+#This is a function fitting the dataset with a linear model
+#y=f({x_i},n)=Sum_i^n(a_i*x_i)
+#y = number of deaths
+#x = [cases, time]
+#Returns:
+#Parameters {a_i} if requested
+#model errors (metrics)
+#scatter plot with data and the model
+#USER Input:
+#Region = ['Country', 'Continent', 'All']
+#
+###############################################################################
+
+
+###############################################################################
+#Load the dataset and clean it
+###############################################################################
+
 data = pd.read_csv('https://opendata.ecdc.europa.eu/covid19/casedistribution/csv')
 data.columns
+
 #remove 2019 data
 data = data[data['year'] == 2020]
+
 #Select dataset 1 for exploration at a 'global' level and based on 'daily' new cases and deaths
 data1 = data[['dateRep', 'day', 'month', 'cases', 'deaths']]
 
