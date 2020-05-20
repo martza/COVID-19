@@ -44,5 +44,5 @@ def linear(data):
     plt.ylabel('global daily deaths')
     plt.xticks()
     plt.yticks()
-    plt.savefig('output_files/linear_model.png')
+    plt.savefig('linear_model.png')
     return
