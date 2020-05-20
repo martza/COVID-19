@@ -2,8 +2,8 @@
 
 import sys
 import argparse
-from prep_data import *
-from linear import *
+from models.prep_data import *
+from models.linear import *
 # constants
 ELIG_MODELS = ['linear', 'non-linear']
 
@@ -28,6 +28,8 @@ def parse_arguments():
                 )
     parser.add_argument('-m', '--model', nargs='?', const='linear',
                 help='choose statistical model.')
+    parser.add_argument('-r', '--region', nargs='?', default='all',
+                help='choose country, country code, geoid, continent or all')
     args = parser.parse_args()
     return(args)
 
@@ -48,7 +50,7 @@ def main(args=None):
 
     # input
     if args.model in ELIG_MODELS:
-        data = dataset('all')
+        data = dataset(args.region)
         linear(data)
     else:
         print(f'The model provided is not supported. please see README.md for'

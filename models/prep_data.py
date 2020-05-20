@@ -8,6 +8,7 @@ full_data = pd.read_csv('https://opendata.ecdc.europa.eu/covid19/casedistributio
 #'geoId', 'countryterritoryCode','popData2018', 'continentExp']
 
 #cleaning the full dataset
+full_data['dateRep']=pd.to_datetime(full_data['dateRep'], infer_datetime_format = True)
 numeric = ['int64','float64']
 length = len(full_data.columns)
 
@@ -41,20 +42,13 @@ def dataset(region):
     elif (reg in country_codes):
         data = full_data[full_data['countryterritoryCode']==reg][['dateRep', 'cases', 'deaths']]
     elif (reg in continent_names):
-        data = full_data[full_data['continentExp']==reg].groupby(['dateRep']).agg(
-            cases = pd.NamedAgg(column = 'cases', aggfunc = 'sum'),
-            deaths = pd.NamedAgg(column = 'deaths', aggfunc = 'sum')
-            )
+        data = full_data[full_data['continentExp']==reg].groupby(['dateRep'], as_index = False).sum()
     elif (reg == 'all'):
-        data = full_data.groupby(['dateRep']).agg(
-            cases = pd.NamedAgg(column = 'cases', aggfunc = 'sum'),
-            deaths = pd.NamedAgg(column = 'deaths', aggfunc = 'sum')
-            )
+        data = full_data.groupby(['dateRep'], as_index = False).sum()
     else:
         print('Invalid country name')
         sys.exit(-1)
 
     data = data.sort_values(by = 'dateRep')
-    nrows = len(data.index)
-    data['time']=np.arange(nrows)
+    data['time']=data.index
     return data
