@@ -19,7 +19,7 @@ The user needs to ``covid_19.py`` parsing different arguments:
 2. ``-m`` for model selection (``linear`` or ``non-linear``). This option applies only when deaths is the target. Default value is ``linear``.
 3. ``-r`` for the region. Default value is ``all``, but one can parse the name of any country or continent, any countrycode or geoID.  
 
-#####Examples:
+##### Examples:
 
 * To request a model that describes the evolution of COVID-19 cases with time in Italy, you may use the following command line :
 
