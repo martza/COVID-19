@@ -49,6 +49,8 @@ def dataset(region):
         print('Invalid country name')
         sys.exit(-1)
 
-    data = data.sort_values(by = 'dateRep')
+    data.sort_values(by = 'dateRep',inplace = True)
+    data.reset_index(drop = True, inplace = True)
     data['time']=data.index
+    data = data[data['cases']>0] #remove zeros for transforming with log
     return data

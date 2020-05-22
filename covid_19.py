@@ -4,6 +4,7 @@ import sys
 import argparse
 from models.prep_data import *
 from models.linear import *
+from models.model_cases import *
 # constants
 ELIG_MODELS = ['linear', 'non-linear']
 
@@ -29,7 +30,9 @@ def parse_arguments():
     parser.add_argument('-m', '--model', nargs='?', const='linear',
                 help='choose statistical model.')
     parser.add_argument('-r', '--region', nargs='?', default='all',
-                help='choose country, country code, geoid, continent or all')
+                help='choose country, country code, geoid, continent or all.')
+    parser.add_argument('-t', '--target', nargs='?', default='deaths',
+                    help='choose deaths or cases for the target variable.')
     args = parser.parse_args()
     return(args)
 
@@ -49,7 +52,10 @@ def main(args=None):
         args = parse_arguments()
 
     # input
-    if args.model in ELIG_MODELS:
+    if args.target == 'cases':
+        data = dataset(args.region)
+        model_cases(data)
+    elif args.model in ELIG_MODELS:
         data = dataset(args.region)
         linear(data)
     else:
