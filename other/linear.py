@@ -3,10 +3,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn import linear_model
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.linear_model import LogisticRegression
 ###############################################################################
 #This is a function fitting the dataset with a linear model
 #y=f({x_i},n)=Sum_i^n(a_i*x_i)
@@ -27,7 +25,6 @@ from sklearn.linear_model import LogisticRegression
 ###############################################################################
 
 data = pd.read_csv('https://opendata.ecdc.europa.eu/covid19/casedistribution/csv')
-data.dtypes
 data['dateRep']=pd.to_datetime(data['dateRep'], infer_datetime_format = True)
 #Select dataset 1 for exploration at a 'global' level and based on 'daily' new cases and deaths
 data1 = data[['dateRep', 'cases', 'deaths']]
@@ -36,18 +33,63 @@ global_data.sort_values( by = ['dateRep'],inplace=True)
 global_data['time']=global_data.index
 
 y = np.array(global_data['deaths'])
-x = np.array(global_data[['cases','time']])
+x = np.array(global_data[['time','cases']])
+###############################################################################
+#Check for outliers
+###############################################################################
+plt.scatter(x[:,0],y)
+plt.scatter(x[:,1],y)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.svm import OneClassSVM
+from sklearn.covariance import EllipticEnvelope
+
+clf = LocalOutlierFactor(n_neighbors=2)
+x1 = x[clf.fit_predict(y.reshape(-1,1)) == 1]
+y1 = y[clf.fit_predict(y.reshape(-1,1)) == 1]
+
+clf1 = OneClassSVM().fit(y.reshape(-1,1))
+clf1.predict(y.reshape(-1,1))
+x2 = x[clf1.predict(y.reshape(-1,1)) == 1]
+y2 = y[clf1.predict(y.reshape(-1,1)) == 1]
+
+cov = EllipticEnvelope(random_state=0).fit(y.reshape(-1,1))
+cov.predict(y.reshape(-1,1))
+x = x[cov.predict(y.reshape(-1,1)) == 1]
+y = y[cov.predict(y.reshape(-1,1)) == 1]
+
+plt.scatter(x[:,0],y, label = 'outliers')
+plt.scatter(x1[:,0],y1)
+#plt.scatter(x2[:,0],y2)
+plt.scatter(x3[:,0],y3)
+plt.legend()
+plt.show()
+plt.scatter(x[:,1],y, label = 'outliers')
+plt.scatter(x1[:,1],y1)
+#plt.scatter(x2[:,1],y2)
+plt.scatter(x3[:,1],y3)
+plt.legend()
+plt.show()
+#Local  Outlier factor and Elliptic Envelope behave the best
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
+
+#Use Ridge regression
+
+ridge = linear_model.RidgeCV(alphas = np.arange(1,11,1), cv = 5).fit(x_train, y_train)
+ridge.coef_
+ridge.alpha_
+y_pred1 = ridge.predict(x_test)
+r2_score(y_test, y_pred1)
+
 lin_reg = linear_model.LinearRegression()
-
 lin_reg.fit(x_train,y_train)
-
+accuracy = cross_validate(lin_reg, x_train, y_train)['test_score'].mean()
 coef = lin_reg.coef_
 coef
 y_pred = lin_reg.predict(x_test)
 mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
+r2_score(y_test, y_pred)
 
 print('The coefficients are : ',coef)
 print('The mse is : ',mse)
@@ -55,8 +97,9 @@ print('The r2 score is : ',r2 )
 global_data['deaths']
 #for the plot generate more data points with the model
 y_plot = lin_reg.predict(x)
-plt.scatter('cases', 'deaths', data=global_data,  color='black')
-plt.scatter(x[:,0], y_plot, color='blue')
+plt.scatter(x[:,1], y, color='black')
+plt.scatter(x_test[:,1], y_pred, color='blue')
+plt.scatter(x_test[:,1], y_pred1, color='green')
 plt.title('linear model')
 plt.xlabel('global daily cases')
 plt.ylabel('global daily deaths')
@@ -65,8 +108,9 @@ plt.yticks()
 #plt.savefig('linear_model.png')
 plt.show()
 
-plt.scatter('time', 'deaths', data=global_data,  color='black')
-plt.scatter(x[:,1], y_plot, color='blue')
+plt.scatter(x[:,0], y, color='black')
+plt.scatter(x_test[:,0], y_pred, color='blue')
+plt.scatter(x_test[:,0], y_pred1, color='green')
 plt.title('linear model')
 plt.xlabel('time (days)')
 plt.ylabel('global daily deaths')
