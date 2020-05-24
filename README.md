@@ -34,11 +34,11 @@ The user needs to ``covid_19.py`` parsing different arguments:
       $ python covid_19.py -m linear -r Italy
   It returns:
 
-      The model coefficients for [time cases] are :  [1.93497211 0.13237863]
-      The MSE is :  18305.763810591132
-      The R squared is :  0.754223894501798
-      Saving plots to deaths_vs_time.png
-      Saving plots to deaths_vs_cases.png
+      The coefficients for [time cases] are :  [1.92227185 0.12401419]
+      The accuracy of the model is :  0.7667675073583096
+      The MSE is :  5232.464869565893
+      The R squared is :  0.8919740280560727
+      Saving plots to deaths.png
 
 
 ### Data
