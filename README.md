@@ -13,7 +13,7 @@ The code takes as input a region and the target variable (cases, deaths). Comput
 
 ### Usage
 
-The user needs to ``covid_19.py`` parsing different arguments:
+The user can parse different arguments to ``covid_19.py``:
 
 1. ``-t`` for the target variable (``cases`` or ``deaths``). Default value is ``deaths``.
 2. ``-m`` for model selection (``linear`` or ``non-linear``). This option applies only when deaths is the target. Default value is ``linear``.
@@ -34,10 +34,10 @@ The user needs to ``covid_19.py`` parsing different arguments:
       $ python covid_19.py -m linear -r Italy
   It returns:
 
-      The coefficients for [time cases] are :  [1.92227185 0.12401419]
-      The accuracy of the model is :  0.7667675073583096
-      The MSE is :  5232.464869565893
-      The R squared is :  0.8919740280560727
+      The coefficients for [time cases] are :  [1.81235189 0.12551218]
+      The value of the regularization parameter is :  1
+      The MSE is :  5932.507784901325
+      The R squared is :  0.848895108773938
       Saving plots to deaths.png
 
 
@@ -49,7 +49,7 @@ The dataset used in this package contains the number of daily new cases and new 
 
 * For the daily new cases the code fits three different models (linear, gaussian and logistic) and selects the model with the R squared score that is closest to 1.
 
-* A linear model is used for mapping daily new deaths to daily new cases in time (*the implementation of a non-linear model is in progress*).
+* A linear model is used for mapping daily new deaths to daily new cases in time. For the linear model, this module is choosing between linear regression with least squares and regression with regularization (Ridge) with built-in cross-validation. It returns the method with the largest R squared value. (*The implementation of a non-linear model is in progress*).
 
 ### Code Organization
 
