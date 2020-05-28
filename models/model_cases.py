@@ -62,7 +62,7 @@ def model_cases(data):
     tt_lin = TransformedTargetRegressor(regressor=LinearRegression(),func=np.log, inverse_func=np.exp)
     tt_lin.fit(x_train,y_train)
     accuracy['Linear'] = cross_validate(tt_lin, x_train, y_train)['test_score'].mean()
-    metric['Linear'] = tt_lin.score(x_train,y_train)
+    metric['Linear'] = tt_lin.score(x_test,y_test)
     y_pred['Linear'] = tt_lin.predict(x_test).reshape(-1)
 
 ######################################
@@ -76,7 +76,7 @@ def model_cases(data):
     tt_gauss.fit(x_train_gauss,y_train)
 #    accuracy['Gaussian'] = cross_validate(tt_gauss, x_train_gauss, y_train)['test_score'].mean()   Not working
     y_pred['Gaussian'] = tt_gauss.predict(x_test_gauss)
-    metric['Gaussian'] = tt_gauss.score(x_train_gauss,y_train)
+    metric['Gaussian'] = tt_gauss.score(x_test_gauss,y_test)
 
 ######################################
 # model 3 Logistic

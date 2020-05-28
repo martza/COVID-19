@@ -76,10 +76,12 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_
 
 #Use Ridge regression
 
-ridge = linear_model.RidgeCV(alphas = np.arange(1,11,1), cv = 5).fit(x_train, y_train)
+ridge = linear_model.RidgeCV(alphas = np.arange(1,11,1), cv = 5)
+ridge.fit(x_train, y_train)
 ridge.coef_
 ridge.alpha_
 y_pred1 = ridge.predict(x_test)
+ridge.score(x_test, y_test)
 r2_score(y_test, y_pred1)
 
 lin_reg = linear_model.LinearRegression()
