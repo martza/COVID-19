@@ -12,12 +12,29 @@ The code takes as input a region and the target variable (cases, deaths). Comput
 * If the user requests a prediction of the number of deaths at a given date, using the model for the cases over time, the code predicts the number of deaths (*not implemented yet*).
 
 ### Usage
+The command line:
 
-The user can parse different arguments to ``covid_19.py``:
+    $python covid_19.py -h
 
-1. ``-t`` for the target variable (``cases`` or ``deaths``). Default value is ``deaths``.
-2. ``-m`` for model selection (``linear`` or ``non-linear``). This option applies only when deaths is the target. Default value is ``linear``.
-3. ``-r`` for the region. Default value is ``all``, but one can parse the name of any country or continent, any countrycode or geoID.  
+returns information about the usage and different options:
+
+    usage: covid_19.py [-h] [-m [MODEL]] [-r [REGION]] [-t [{deaths,cases}]] [-o [{knn,LocalOutlierFactor,EllipticEnvelope}]] [-op [OUTLIERS_PORTION]]
+
+    Parse various arguments.
+
+    optional arguments:
+    -h, --help            show this help message and exit
+    -m [MODEL], --model [MODEL]
+                    Choose statistical model. Default is linear.
+    -r [REGION], --region [REGION]
+                    Choose country, country code, geoid, continent or all. Default is all.
+    -t [{deaths,cases}], --target [{deaths,cases}]
+                    Choose the target. Default is deaths.
+    -o [{knn,LocalOutlierFactor,EllipticEnvelope}], --outliers_method [{knn,LocalOutlierFactor,EllipticEnvelope}]
+                    Choose method for the detection of outliers. Default
+                    is knn.
+    -op [OUTLIERS_PORTION], --outliers_portion [OUTLIERS_PORTION]
+                    Provide the portion of outliers in the dataset. Default is 0.1.
 
 ##### Examples:
 

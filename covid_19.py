@@ -27,12 +27,17 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
                 description='Parse various arguments.'
                 )
-    parser.add_argument('-m', '--model', nargs='?', const='linear',
-                help='choose statistical model.')
+    parser.add_argument('-m', '--model', nargs='?', const='linear', type = str,
+                        help='Choose statistical model. Default is linear.')
     parser.add_argument('-r', '--region', nargs='?', default='all',
-                help='choose country, country code, geoid, continent or all.')
-    parser.add_argument('-t', '--target', nargs='?', default='deaths',
-                    help='choose deaths or cases for the target variable.')
+                        type = str, help='Choose country, country code, geoid, continent or all. Default is all.')
+    parser.add_argument('-t', '--target', nargs='?', default='deaths', choices = ['deaths', 'cases'],
+                        type = str, help='Choose the target. Default is deaths.')
+    parser.add_argument('-o', '--outliers_method', nargs='?', default='knn',
+                        choices = ['knn', 'LocalOutlierFactor', 'EllipticEnvelope'],
+                        type = str, help='Choose method for the detection of outliers. Default is knn.')
+    parser.add_argument('-op', '--outliers_portion', nargs='?', default= 0.1,
+                        type = float, help='Provide the portion of outliers in the dataset. Default is 0.1.')
     args = parser.parse_args()
     return(args)
 
@@ -57,7 +62,8 @@ def main(args=None):
         model_cases(data)
     elif args.model in ELIG_MODELS:
         data = dataset(args.region)
-        linear(data)
+        clean_data = outlier_detection(data, args.outliers_portion, args.outliers_method)
+        linear(clean_data)
     else:
         print(f'The model provided is not supported. please see README.md for'
                ' supported statistical models. Program exits.')
