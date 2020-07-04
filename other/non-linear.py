@@ -28,12 +28,7 @@ x = np.array(global_data[['time','cases']])
 plt.scatter(x[:,0],y)
 plt.scatter(x[:,1],y)
 
-from sklearn.neighbors import LocalOutlierFactor
 from sklearn.pipeline import Pipeline
-
-clf = LocalOutlierFactor(n_neighbors=2, contamination = 0.1)
-x = x[clf.fit_predict(y.reshape(-1,1)) == 1]
-y = y[clf.fit_predict(y.reshape(-1,1)) == 1]
 
 plt.scatter(x[:,0],y, label = 'outliers')
 plt.legend()

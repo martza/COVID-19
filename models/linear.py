@@ -14,19 +14,8 @@ from sklearn.neighbors import LocalOutlierFactor
 
 
 def linear(data):
-#Casting 1D array in 2D
     x = np.array(data[['time','cases']])
     y = np.array(data['deaths'])
-
-#Removing outliers
-
-#    clf = LocalOutlierFactor(n_neighbors=2, contamination = 0.1)
-#    x = x[clf.fit_predict(y.reshape(-1,1)) == 1]
-#    y = y[clf.fit_predict(y.reshape(-1,1)) == 1]
-    cov = EllipticEnvelope(random_state=0).fit(y.reshape(-1,1))
-    cov.predict(y.reshape(-1,1))
-    x = x[cov.predict(y.reshape(-1,1)) == 1]
-    y = y[cov.predict(y.reshape(-1,1)) == 1]
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
