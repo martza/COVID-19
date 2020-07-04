@@ -59,7 +59,6 @@ def linear(data):
     print('Saving plots to deaths.png')
 
     fig, (ax1, ax2) = plt.subplots(2, figsize = (10,10))
-
     ax1.scatter(x_test[:,0], y_test,  color='black', label = 'Exact')
     ax1.scatter(x_test[:,0], y_pred[model], color='blue', label = model)
     ax1.set(xlabel = 'Days passed since 31/12/2019', ylabel = 'Deaths')
