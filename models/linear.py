@@ -8,7 +8,7 @@ from sklearn.covariance import EllipticEnvelope
 from sklearn.neighbors import LocalOutlierFactor
 
 ######################################################################
-# A module that takes the dataset and trains a linear model
+# linear(x): A function that takes the dataset and trains a linear model
 # Returns model parameters, metrics and graphs
 ######################################################################
 #   Model: y = a x1 + b x2 + c
@@ -25,9 +25,9 @@ from sklearn.neighbors import LocalOutlierFactor
 #   * Graphical comparison between test values and prediction
 ######################################################################
 
-
 def linear(data):
-    # Two dataframes for keeping the metrics and predictions of the two methods
+
+    # Dataframes for keeping the metrics and predictions of the two methods
     metric = pd.DataFrame(data = np.zeros([1,2]) ,columns = ['squares', 'Ridge'])
     y_pred = pd.DataFrame(columns = ['squares', 'Ridge'])
 
