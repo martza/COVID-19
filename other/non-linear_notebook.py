@@ -4,8 +4,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn import linear_model
+from sklearn.pipeline import Pipeline
+
 
 ###############################################################################
 #Load the dataset and clean it
@@ -19,35 +21,59 @@ global_data = data1.groupby(['dateRep'], as_index = False).sum()
 global_data.sort_values( by = ['dateRep'],inplace=True)
 global_data['time']=global_data.index
 
+global_data = global_data[['time','cases','deaths']]
+
+scaler = StandardScaler()
+scaler.fit(global_data[['time']])
+transformed_data = scaler.transform(global_data[['time']])
+transformed_data.reshape(-1)
+scaler.inverse_transform(transformed_data)
+scaled_data[5]
+scaler_x = StandardScaler()
+scaler_y = StandardScaler()
 y = np.array(global_data['deaths'])
 x = np.array(global_data[['time','cases']])
 
-###############################################################################
-#Check for outliers
-###############################################################################
-plt.scatter(x[:,0],y)
-plt.scatter(x[:,1],y)
 
-from sklearn.pipeline import Pipeline
-
-plt.scatter(x[:,0],y, label = 'outliers')
-plt.legend()
-plt.show()
-plt.scatter(x[:,1],y, label = 'outliers')
-plt.legend()
-plt.show()
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
 y_pred = pd.DataFrame()
-for i in np.arange(1,2) :
-    pipe = Pipeline([('poly',PolynomialFeatures(degree=i)),('least_squares',linear_model.LinearRegression())])
+metric = pd.DataFrame()
+y_pred_ridge = pd.DataFrame()
+metric_ridge = pd.DataFrame()
+alpha = pd.DataFrame()
+
+for i in np.arange(1,10) :
+    pipe = Pipeline([('poly',PolynomialFeatures(degree=i)),
+                     ('least_squares',linear_model.LinearRegression())])
     pipe.fit(x_train, y_train)
     y_pred[i] = pipe.predict(x_test)
-y_pred
+    metric[i] = r2_score(y_test, np.array(y_pred[i])).reshape(-1)
 
-x_train_nl = poly.fit_transform(x_train)
-x_test_nl = poly.fit_transform(x_test)
+for i in np.arange(1,10) :
+    pipe = Pipeline([('poly',PolynomialFeatures(degree=i)),
+                     ('ridge',linear_model.RidgeCV(alphas = np.arange(1,11,1), cv = 5))])
+    pipe.fit(x_train, y_train)
+    y_pred_ridge[i] = pipe.predict(x_test)
+    metric_ridge[i] = r2_score(y_test, np.array(y_pred[i])).reshape(-1)
+    alpha[i] = ridge.alpha_.reshape(-1)
+alpha
+y_pred_ridge
+metric_ridge
+metric
+degree = metric.idxmax(axis = 1)[0]
+degree_ridge = metric_ridge.idxmax(axis = 1)[0]
+
+if (metric[degree][0]<metric_ridge[degree_ridge][0]):
+    model = 'Ridge'
+    y_pred = y_pred_rigde
+    metric = metric_ridge
+    degree = degree_ridge
+else :
+    model = 'Least squares'
+model
+
 
 ridge = linear_model.RidgeCV(alphas = np.arange(1,11,1), cv = 5)
 ridge.fit(x_train_nl, y_train)

@@ -3,11 +3,11 @@
 import sys
 import argparse
 from models.prep_data import *
-from models.linear import *
+from models.models import *
 from models.model_cases import *
 # constants
 ELIG_MODELS = ['linear', 'non-linear']
-
+OUTLIERS_METHODS = ['knn', 'LocalOutlierFactor', 'EllipticEnvelope']
 
 def detect_python_version():
     """
@@ -27,14 +27,15 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
                 description='Parse various arguments.'
                 )
-    parser.add_argument('-m', '--model', nargs='?', const='linear', type = str,
+    parser.add_argument('-m', '--model', nargs='?', default='linear',
+                        choices = ELIG_MODELS, type = str,
                         help='Choose statistical model. Default is linear.')
     parser.add_argument('-r', '--region', nargs='?', default='all',
                         type = str, help='Choose country, country code, geoid, continent or all. Default is all.')
     parser.add_argument('-t', '--target', nargs='?', default='deaths', choices = ['deaths', 'cases'],
                         type = str, help='Choose the target. Default is deaths.')
     parser.add_argument('-o', '--outliers_method', nargs='?', default='knn',
-                        choices = ['knn', 'LocalOutlierFactor', 'EllipticEnvelope'],
+                        choices = OUTLIERS_METHODS,
                         type = str, help='Choose method for the detection of outliers. Default is knn.')
     parser.add_argument('-op', '--outliers_portion', nargs='?', default= 0.1,
                         type = float, help='Provide the portion of outliers in the dataset. Default is 0.1.')
@@ -63,7 +64,10 @@ def main(args=None):
     elif args.model in ELIG_MODELS:
         data = dataset(args.region)
         clean_data = outlier_detection(data, args.outliers_portion, args.outliers_method)
-        linear(clean_data)
+        if args.model == 'linear' :
+            linear(clean_data)
+        elif args.model == 'non-linear' :
+            non_linear(clean_data)
     else:
         print(f'The model provided is not supported. please see README.md for'
                ' supported statistical models. Program exits.')

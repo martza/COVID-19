@@ -18,23 +18,25 @@ The command line:
 
 returns information about the usage and different options:
 
-    usage: covid_19.py [-h] [-m [MODEL]] [-r [REGION]] [-t [{deaths,cases}]] [-o [{knn,LocalOutlierFactor,EllipticEnvelope}]] [-op [OUTLIERS_PORTION]]
+    usage: covid_19.py [-h] [-m [{linear,non-linear}]] [-r [REGION]]
+                 [-t [{deaths,cases}]]
+                 [-o [{knn,LocalOutlierFactor,EllipticEnvelope}]]
+                 [-op [OUTLIERS_PORTION]]
 
     Parse various arguments.
 
     optional arguments:
     -h, --help            show this help message and exit
-    -m [MODEL], --model [MODEL]
-                    Choose statistical model. Default is linear.
+    -m [{linear,non-linear}], --model [{linear,non-linear}]
+                        Choose statistical model. Default is linear.
     -r [REGION], --region [REGION]
-                    Choose country, country code, geoid, continent or all. Default is all.
+                        Choose country, country code, geoid, continent or all. Default is all.
     -t [{deaths,cases}], --target [{deaths,cases}]
-                    Choose the target. Default is deaths.
+                        Choose the target. Default is deaths.
     -o [{knn,LocalOutlierFactor,EllipticEnvelope}], --outliers_method [{knn,LocalOutlierFactor,EllipticEnvelope}]
-                    Choose method for the detection of outliers. Default
-                    is knn.
+                        Choose method for the detection of outliers. Default is knn.
     -op [OUTLIERS_PORTION], --outliers_portion [OUTLIERS_PORTION]
-                    Provide the portion of outliers in the dataset. Default is 0.1.
+                        Provide the portion of outliers in the dataset. Default is 0.1.
 
 ##### Examples:
 
@@ -46,10 +48,10 @@ returns information about the usage and different options:
       The model is :  Gaussian
       The R squared is : 0.5035300768867241
 
-* To apply a linear model to the number of deaths in Italy, you may use the following command line :
+* To train a linear model for the number of deaths in Italy, you may use the following command line :
 
       $ python covid_19.py -m linear -r Italy
-  It returns:
+  It returns :
 
       The coefficients for [time cases] are :  [1.81235189 0.12551218]
       The value of the regularization parameter is :  1
@@ -57,6 +59,16 @@ returns information about the usage and different options:
       The R squared is :  0.848895108773938
       Saving plots to deaths.png
 
+* To train a non-linear model for the number of deaths in Italy, you may use the following command line :
+
+      $ python covid_19.py -m non-linear -r Italy
+  It returns :
+
+      Polynomial regression with least squares :
+      The degree of the polynomial is :  3
+      The MSE is :  5275.404436654533
+      The R squared is :  0.9031394281865164
+      Saving plots to deaths.png
 
 ### Data
 
@@ -66,7 +78,7 @@ The dataset used in this package contains the number of daily new cases and new 
 
 * For the daily new cases the code fits three different models (linear, gaussian and logistic) and selects the model with the R squared score that is closest to 1.
 
-* A linear model is used for mapping daily new deaths to daily new cases in time. For the linear model, this module is choosing between linear regression with least squares and regression with regularization (Ridge) with built-in cross-validation. It returns the method with the largest R squared value. (*The implementation of a non-linear model is in progress*).
+* A linear and non-linear models are supported for mapping daily new deaths to daily new cases in time. The linear model includes regularization with cross-validation in order to optimize the R squared metric. For non-linear regression, the code fits the polynomial that optimizes the R squared metric and includes regularization effects.
 
 ### Code Organization
 
@@ -76,8 +88,7 @@ COVID-19
 ├── models
 │   ├── prep_data.py
 │   ├── model_cases.py
-│   ├── linear.py
-│   └── non-linear.py
+│   └── models.py
 ├── output_files
 │   └── linear.py
 └── README.md
